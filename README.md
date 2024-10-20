@@ -1,10 +1,21 @@
-# ML_Assignment_1
-The main goal of this project is to build two types of neural networks: a feedforward neural network (FFNN) and a recurrent neural network (RNN) for analyzing the tone of Yelp reviews. The objective is to predict the sentiment score (ranging from 1 to 5) of the review text.
+# starter code for a2
+
+Add the corresponding (one) line under the ``[to fill]`` in ``def forward()`` of the class for ffnn.py and rnn.py
+
+Feel free to modify other part of code, they are just for your reference.
+
+---
+
+One example on running the code:
 
 **FFNN**
-``!python ffnn.py --hidden_dim 32 --epochs 50 --train_data ./training.json --val_data ./validation.json``
+
+``python ffnn.py --hidden_dim 10 --epochs 1 ``
+``--train_data ./training.json --val_data ./validation.json``
+
 
 **RNN**
-``!python rnn.py --hidden_dim 32 --epochs 5 --train_data training.json --val_data validation.json``
 
+``python rnn.py --hidden_dim 32 --epochs 10 ``
+``--train_data training.json --val_data validation.json``
 
