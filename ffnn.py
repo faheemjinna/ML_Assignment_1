@@ -27,16 +27,16 @@ class FFNN(nn.Module):
 
     def forward(self, input_vector):
 
-        #Compute the sequence in the first layer.
+        # Compute the sequence in the first layer.
         first_layer = self.W1(input_vector)
     
-        #Convert the output to zero if the output is negative and left unchange if postive to the hidden state.
+        # Convert the output to zero if the output is negative and left unchanged if positive to the hidden state.
         hidden_state = self.activation(first_layer)
 
-        #To change the hidden state to 5 sentiment classes ouput.
+        # To change the hidden state to 5 sentiment classes output.
         output_layer = self.W2(hidden_state)
     
-        #Applying softmax to convert them into a probability distribution
+        # Applying softmax to convert them into a probability distribution
         predicted_vector = self.softmax(output_layer)
     
         return predicted_vector
@@ -126,6 +126,9 @@ if __name__ == "__main__":
     print("========== Training for {} epochs ==========".format(args.epochs))
     train_losses = []
     val_accuracies = []
+    best_val_accuracy = 0
+    corresponding_train_accuracy = 0
+    best_val_time = 0
     errors = []  # List to store error examples
 
     for epoch in range(args.epochs):
@@ -166,15 +169,16 @@ if __name__ == "__main__":
 
         avg_loss = total_loss / (N // minibatch_size)
         train_losses.append(avg_loss)
+        train_accuracy = correct / total
         print("Training completed for epoch {}".format(epoch + 1))
-        print("Training accuracy for epoch {}: {}".format(epoch + 1, correct / total))
+        print("Training accuracy for epoch {}: {}".format(epoch + 1, train_accuracy))
         print("Training time for this epoch: {}".format(time.time() - start_time))
 
         # Validation
         model.eval()
         correct = 0
         total = 0
-        start_time = time.time()
+        val_start_time = time.time()
         print("Validation started for epoch {}".format(epoch + 1))
         N = len(valid_data)
         for minibatch_index in tqdm(range(N // minibatch_size)):
@@ -190,9 +194,20 @@ if __name__ == "__main__":
             loss = loss / minibatch_size
         val_accuracy = correct / total
         val_accuracies.append(val_accuracy)
+        val_time = time.time() - val_start_time
         print("Validation completed for epoch {}".format(epoch + 1))
         print("Validation accuracy for epoch {}: {}".format(epoch + 1, val_accuracy))
-        print("Validation time for this epoch: {}".format(time.time() - start_time))
+        print("Validation time for this epoch: {}".format(val_time))
+
+        # Track best validation accuracy
+        if val_accuracy > best_val_accuracy:
+            best_val_accuracy = val_accuracy
+            corresponding_train_accuracy = train_accuracy
+            best_val_time = val_time
+
+    print("Best Validation Accuracy: {:.4f}".format(best_val_accuracy))
+    print("Corresponding Training Accuracy: {:.4f}".format(corresponding_train_accuracy))
+    print("Best Validation Time: {:.2f} seconds".format(best_val_time))
 
     # To get training losses and validation accuracies graph
     with open('results.json', 'w') as f:
